@@ -1,0 +1,196 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-fab/paper-fab.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../juicy-jsoneditor/juicy-jsoneditor.html">
+<link rel="import" href="../paper-input/paper-input.html">
+
+<!-- josdejong/jsoneditor#104 workaround-->
+<link rel="stylesheet" type="text/css" href="../jsoneditor/dist/jsoneditor.min.css">
+
+<dom-module id="component-adder">
+    <template>
+        <style>
+            #editor {
+                width: 90%;
+            }
+            paper-dialog-scrollable {
+                display: block;
+            }
+            #editor paper-dialog-scrollable {
+                height: 200px;
+            }
+            juicy-jsoneditor {
+                display: inline-block;
+                height: 100%;
+                width: calc(50% - 10px);
+            }
+
+            #bowernamedialog {
+                width: 400px;
+            }
+            #bowernamedialog paper-input {
+                display: inline-block;
+                margin: 0 20px;
+            }
+
+            .note {
+                font-size: 12px;
+                line-height: 1;
+                font-style: italic;
+            }
+        </style>
+        <paper-fab icon="icons:add" title="add" on-click="openPropertyAdder"></paper-fab>
+
+        <paper-dialog id="editor">
+            <h2>Component Editor</h2>
+            <paper-dialog-scrollable>
+                <juicy-jsoneditor
+                    json="{{bower_json}}"
+                    mode="code"
+                    modes="[[modes]]"
+                    search="false"></juicy-jsoneditor>
+                <juicy-jsoneditor
+                    json="{{property_json}}"
+                    mode="code"
+                    modes="[[modes]]"
+                    search="false"></juicy-jsoneditor>
+            </paper-dialog-scrollable>
+            <div class="buttons">
+                <paper-button dialog-dismiss>Cancel</paper-button>
+                <paper-button on-click="handleAdd">Accept</paper-button>
+            </div>
+        </paper-dialog>
+
+        <paper-dialog id="bowernamedialog">
+            <h2>How did you install it using bower?</h2>
+            <paper-dialog-scrollable>
+                <p>bower install
+                    <paper-input label="Bower Package Name" value="{{bowerName}}">
+                    </paper-input>
+                </p>
+                <p class="note">Why is this important? This package name is stored and will be used by other devs while installing components in their dev machines.</p>
+            </paper-dialog-scrollable>
+            <div class="buttons">
+                <paper-button on-click="handleBowerNameAdd">Accept</paper-button>
+            </div>
+        </paper-dialog>
+    </template>
+    <script>
+        Polymer({
+            is: 'component-adder',
+
+            properties: {
+                modes: {
+                    type: Array,
+                    value: [
+                        'form',
+                        'code',
+                        'tree',
+                        'view'
+                    ],
+                    reflectToAttribute: false
+                },
+
+                bower_json: {
+                    type: Object,
+                    value: {}
+                },
+
+                property_json: {
+                    type: Array,
+                    value: [
+                        {
+                        "description" : "",
+                        "name" : "",
+                        "type" : "",
+                        "value" : ""
+                        }
+                    ]
+                },
+
+                display_property: {
+                    type: Array,
+                    value: [
+                        {
+                            description : "The start column location of this component",
+                            name : "gridColumnStart",
+                            type : "text",
+                            value : "1"
+                        }, {
+                            description : "The end column location of this component",
+                            name : "gridColumnEnd",
+                            type : "text",
+                            value : "12"
+                        }, {
+                            description : "The start row location of this component",
+                            name : "gridRowStart",
+                            type : "text",
+                            value : ""
+                        }, {
+                            description : "The end row location of this component",
+                            name : "gridRowEnd",
+                            type : "text",
+                            value : ""
+                        }
+                    ]
+                },
+
+                bowerName: {
+                    type: String,
+                    value: '',
+                    notify: true
+                },
+
+                jsonToStore:  {
+                    type: Object,
+                    computed: 'generateJson(bower_json, property_json, display_property)'
+                }
+            },
+
+            openPropertyAdder: function() {
+                this.$.editor.open();
+            },
+
+            generateJson: function(bower_json, property_json, display_property) {
+                return {
+                    name: bower_json.name,
+                    properties: [
+                        {
+                            name: "componentProperties",
+                            value: property_json
+                        },
+                        {
+                            name : "display",
+                            value : display_property
+                        }
+                    ],
+                    homepage: bower_json.homepage,
+                    version: bower_json.version
+                };
+            },
+
+            handleAdd: function() {
+                this.$.editor.close();
+
+                if(typeof this.jsonToStore.bower === "undefined") {
+                    this.$.bowernamedialog.open();
+                    return;
+                }
+
+                this.triggerFirebaseAdd();
+            },
+
+            handleBowerNameAdd: function() {
+                this.jsonToStore.bower = this.bowerName;
+                this.$.bowernamedialog.close();
+                this.triggerFirebaseAdd();
+            },
+
+            triggerFirebaseAdd: function() {
+                console.log('triggering add to firebase');
+            }
+        });
+    </script>
+</dom-module>

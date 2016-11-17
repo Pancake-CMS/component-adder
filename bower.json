@@ -1,0 +1,27 @@
+{
+  "name": "component-adder",
+  "homepage": "https://github.com/Pancake-CMS/component-adder",
+  "authors": [
+    "Prateek Jadhwani <prateekjadhwani@users.noreply.github.com>"
+  ],
+  "description": "",
+  "main": "component-adder.html",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "^1.7.0",
+    "paper-fab": "PolymerElements/paper-fab#^1.2.1",
+    "iron-icons": "PolymerElements/iron-icons#^1.2.0",
+    "paper-dialog": "PolymerElements/paper-dialog#^1.1.0",
+    "paper-button": "PolymerElements/paper-button#^1.0.14",
+    "juicy-jsoneditor": "^1.1.0",
+    "paper-input": "PolymerElements/paper-input#^1.1.21",
+    "polymerfire": "firebase/polymerfire#^0.10.3"
+  }
+}
