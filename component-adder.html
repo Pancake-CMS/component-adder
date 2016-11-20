@@ -5,6 +5,7 @@
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../juicy-jsoneditor/juicy-jsoneditor.html">
 <link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../polymerfire/firebase-document.html">
 
 <!-- josdejong/jsoneditor#104 workaround-->
 <link rel="stylesheet" type="text/css" href="../jsoneditor/dist/jsoneditor.min.css">
@@ -19,12 +20,12 @@
                 display: block;
             }
             #editor paper-dialog-scrollable {
-                height: 200px;
+                height: 300px;
             }
             juicy-jsoneditor {
                 display: inline-block;
-                height: 100%;
-                width: calc(50% - 10px);
+                height: calc(100% - 60px);
+                width: calc(100% - 10px);
             }
 
             #bowernamedialog {
@@ -35,27 +36,47 @@
                 margin: 0 20px;
             }
 
+            .divider {
+                @apply(--layout-horizontal)
+            }
+
+            .divider > div {
+                @apply(--layout-flex);
+            }
+
             .note {
                 font-size: 12px;
                 line-height: 1;
                 font-style: italic;
             }
         </style>
+        <firebase-document
+            id="componenteditor">
+        </firebase-document>
+
         <paper-fab icon="icons:add" title="add" on-click="openPropertyAdder"></paper-fab>
 
         <paper-dialog id="editor">
             <h2>Component Editor</h2>
             <paper-dialog-scrollable>
-                <juicy-jsoneditor
-                    json="{{bower_json}}"
-                    mode="code"
-                    modes="[[modes]]"
-                    search="false"></juicy-jsoneditor>
-                <juicy-jsoneditor
-                    json="{{property_json}}"
-                    mode="code"
-                    modes="[[modes]]"
-                    search="false"></juicy-jsoneditor>
+                <div class="divider">
+                    <div>
+                        <p>Enter the contents of <span>bower.json</span> file.</p>
+                        <juicy-jsoneditor
+                            json="{{bower_json}}"
+                            mode="code"
+                            modes="[[modes]]"
+                            search="false"></juicy-jsoneditor>
+                    </div>
+                    <div>
+                        <p>Enter the contents of <span>properties.json</span> file.</p>
+                        <juicy-jsoneditor
+                            json="{{property_json}}"
+                            mode="code"
+                            modes="[[modes]]"
+                            search="false"></juicy-jsoneditor>
+                    </div>
+                </div>
             </paper-dialog-scrollable>
             <div class="buttons">
                 <paper-button dialog-dismiss>Cancel</paper-button>
@@ -150,6 +171,7 @@
             },
 
             openPropertyAdder: function() {
+                this.jsonToStore = null;
                 this.$.editor.open();
             },
 
@@ -189,7 +211,7 @@
             },
 
             triggerFirebaseAdd: function() {
-                console.log('triggering add to firebase');
+                this.$$('#componenteditor').setStoredValue('/components/' + this.jsonToStore.name, this.jsonToStore);
             }
         });
     </script>

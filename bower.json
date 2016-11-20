@@ -22,6 +22,6 @@
     "paper-button": "PolymerElements/paper-button#^1.0.14",
     "juicy-jsoneditor": "^1.1.0",
     "paper-input": "PolymerElements/paper-input#^1.1.21",
-    "polymerfire": "firebase/polymerfire#^0.10.3"
+    "polymerfire": "firebase/polymerfire#^0.9.4"
   }
 }
