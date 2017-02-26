@@ -116,7 +116,8 @@
 
                 bower_json: {
                     type: Object,
-                    value: {}
+                    value: {},
+                    notify: true
                 },
 
                 property_json: {
@@ -128,7 +129,8 @@
                         "type" : "",
                         "value" : ""
                         }
-                    ]
+                    ],
+                    notify: true
                 },
 
                 display_property: {
@@ -166,9 +168,21 @@
 
                 jsonToStore:  {
                     type: Object,
-                    computed: 'generateJson(bower_json, property_json, display_property)'
+                    value: {},
+                    notify: true
+                },
+
+                nextIndex: {
+                    type: Number,
+                    notify: true,
+                    value: 0,
+                    reflectToAttribute: true
                 }
             },
+
+            observers: [
+                'generateJson(bower_json, property_json, display_property)'
+            ],
 
             openPropertyAdder: function() {
                 this.jsonToStore = null;
@@ -176,7 +190,8 @@
             },
 
             generateJson: function(bower_json, property_json, display_property) {
-                return {
+                console.log(bower_json, property_json, display_property);
+                var data = {
                     name: bower_json.name,
                     properties: [
                         {
@@ -189,11 +204,13 @@
                         }
                     ],
                     homepage: bower_json.homepage,
-                    version: bower_json.version
+                    version: bower_json.version || '0.0'
                 };
+                this.set('jsonToStore', data);
             },
 
             handleAdd: function() {
+                this.generateJson(this.bower_json, this.property_json, this.display_property);
                 this.$.editor.close();
 
                 if(typeof this.jsonToStore.bower === "undefined") {
@@ -211,7 +228,7 @@
             },
 
             triggerFirebaseAdd: function() {
-                this.$$('#componenteditor').setStoredValue('/components/' + this.jsonToStore.name, this.jsonToStore);
+                this.$$('#componenteditor').setStoredValue('/components/' + this.nextIndex, this.jsonToStore);
             }
         });
     </script>
