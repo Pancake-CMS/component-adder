@@ -190,7 +190,6 @@
             },
 
             generateJson: function(bower_json, property_json, display_property) {
-                console.log(bower_json, property_json, display_property);
                 var data = {
                     name: bower_json.name,
                     properties: [
@@ -228,6 +227,7 @@
             },
 
             triggerFirebaseAdd: function() {
+                this.nextIndex = this.nextIndex || 0;
                 this.$$('#componenteditor').setStoredValue('/components/' + this.nextIndex, this.jsonToStore);
             }
         });
